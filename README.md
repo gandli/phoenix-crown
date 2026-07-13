@@ -39,6 +39,12 @@ src/
 public/crowns/          # 凤冠图（对齐原项目，已获授权）
 ```
 
+## 参考与来源
+
+- **项目灵感**：参考推文 [x.com/i/status/2076410277109645741](https://x.com/i/status/2076410277109645741)
+- **fork 源码**：[aigc17/Chinese-PhoenixCrown](https://github.com/aigc17/Chinese-PhoenixCrown)
+  （对应推文 [x.com/i/status/2076602891432034606](https://x.com/i/status/2076602891432034606)）
+
 ## 对齐说明
 
 文案、`charPool`、凤冠图资源来自对标项目（已获授权用于本仓库发布）。
