@@ -1,0 +1,59 @@
+name: changelog
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  update-changelog:
+    # skip the commits this workflow itself produces
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build changelog entry from this push
+        id: build
+        run: |
+          BEFORE="${{ github.event.before }}"
+          AFTER="${{ github.event.after }}"
+          DATE=$(date +'%Y-%m-%d')
+          {
+            echo "## $DATE"
+            echo
+            if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+              # initial push: list all commits up to AFTER
+              git log --pretty=format:'- %s (%h)' "$AFTER" --reverse
+            else
+              git log --pretty=format:'- %s (%h)' "${BEFORE}..${AFTER}" --reverse
+            fi
+            echo
+            echo
+          } > /tmp/entry.md
+          cat /tmp/entry.md
+
+      - name: Prepend entry to CHANGELOG.md
+        run: |
+          if [ ! -f CHANGELOG.md ]; then
+            printf '# Changelog\n\n自动追加自每次 push 到 main。\n\n' > CHANGELOG.md
+          fi
+          cat /tmp/entry.md CHANGELOG.md > CHANGELOG.tmp
+          mv CHANGELOG.tmp CHANGELOG.md
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          if git diff --cached --quiet; then
+            echo "no changelog change, skip"
+            exit 0
+          fi
+          git commit -m "chore: update changelog [skip ci]"
+          git push
