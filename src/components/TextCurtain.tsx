@@ -235,13 +235,17 @@ export function TextCurtain({
      * roof's under-eave path). Returns null when nothing hangs there.
      */
     function contourYAt(canvasX: number): number | null {
-      if (!contourPixels || !contourSelector) return 0;
-      const img = document.querySelector(contourSelector) as HTMLImageElement | null;
+      const img = document.querySelector(contourSelector!) as HTMLImageElement | null;
       if (!img) return 0;
       const imgRect = img.getBoundingClientRect();
       const canvasRect = canvas!.getBoundingClientRect();
       const pageX = canvasRect.left + canvasX;
       if (pageX < imgRect.left || pageX > imgRect.right) return null;
+      // CORS / sampling failed: fall back to the image's bottom edge so the
+      // curtain still hangs from the crown instead of vanishing entirely.
+      if (!contourPixels) {
+        return imgRect.bottom - canvasRect.top;
+      }
       const ix = Math.min(
         contourW - 1,
         Math.max(0, Math.round(((pageX - imgRect.left) / imgRect.width) * contourW)),
