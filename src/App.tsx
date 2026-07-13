@@ -25,39 +25,42 @@ export default function App() {
 
   return (
     <main
-      className={`paper-grain relative h-dvh overflow-hidden bg-[var(--background)] transition-colors duration-700 ${
+      className={`paper-grain relative flex h-dvh flex-col overflow-hidden bg-[var(--background)] transition-colors duration-700 ${
         dark ? "dark" : ""
       }`}
     >
       <SiteHeader view={view} onViewChange={(v) => go(() => setView(v))} />
 
-      {view === "scene" ? (
-        <>
-          <DestinationScene
-            destination={destinations[index]}
-            entrance={entrance}
-            onPrev={() => go(() => setIndex(prev))}
-            onNext={() => go(() => setIndex(next))}
+      {/* content area sits below the header in the flex column */}
+      <div className="relative min-h-0 flex-1 overflow-hidden">
+        {view === "scene" ? (
+          <>
+            <DestinationScene
+              destination={destinations[index]}
+              entrance={entrance}
+              onPrev={() => go(() => setIndex(prev))}
+              onNext={() => go(() => setIndex(next))}
+            />
+            <div
+              data-curtain-avoid
+              className="pointer-events-none absolute bottom-[3%] left-1/2 -translate-x-1/2 text-center"
+            >
+              <div className="text-xs uppercase tracking-[0.3em] text-[var(--muted-foreground)]">
+                {destinations[index].phraseNote}
+              </div>
+              <div className="mt-1 text-base text-[var(--foreground)]">
+                {destinations[index].phrase}
+              </div>
+            </div>
+          </>
+        ) : (
+          <GalleryView
+            destinations={destinations}
+            initialIndex={index}
+            onSelect={(i) => go(() => { setIndex(i); setView("scene"); })}
           />
-          <div
-            data-curtain-avoid
-            className="pointer-events-none absolute bottom-[3%] left-1/2 -translate-x-1/2 text-center"
-          >
-            <div className="text-xs uppercase tracking-[0.3em] text-[var(--muted-foreground)]">
-              {destinations[index].phraseNote}
-            </div>
-            <div className="mt-1 text-base text-[var(--foreground)]">
-              {destinations[index].phrase}
-            </div>
-          </div>
-        </>
-      ) : (
-        <GalleryView
-          destinations={destinations}
-          initialIndex={index}
-          onSelect={(i) => go(() => { setIndex(i); setView("scene"); })}
-        />
-      )}
+        )}
+      </div>
     </main>
   );
 }
