@@ -4,14 +4,41 @@
 
 ## 技术栈
 
-| 层 | 实现 |
-|---|---|
-| 布局 | **pretext**（`measureLineStats` 在浏览器运行时测量真实 CJK 字宽，据此定列距，而非固定栅格）|
-| 渲染 | Canvas atlas 图集（`drawImage` stamp，避免每帧 `fillText` 瓶颈）|
-| 物理 / 动效 | 原项目 verlet 链：掉落淡入（reveal）、idle breeze 微风、鼠标拨开、松手回弹（home 弹簧）|
-| 拼接 | 采样凤冠 PNG 的真实 alpha 轮廓，帘幕沿冠形垂挂 |
-| 框架 | Vite + React 19 + TypeScript |
-| 部署 | Cloudflare（`@cloudflare/vite-plugin` 自动产出 `wrangler.json`）|
+| 层 | 技术 | 说明 |
+|---|---|---|
+| 构建框架 | Vite `^8.1.4` + React `^19.2.0` + TypeScript `^7.0.2` | 纯客户端 SPA，无 SSR |
+| 样式 | Tailwind CSS `^4.3.2`（`@tailwindcss/vite`） | 暗场主题，零运行时 |
+| 布局引擎 | `@chenglou/pretext` `^0.0.8` | 浏览器运行时 `measureLineStats` 测真实 CJK 字宽，定列距（非固定栅格）|
+| 渲染 | Canvas 2D + atlas 图集 | 每字预栅格化进离屏 canvas，`drawImage` 盖章，避免每帧 `fillText` 瓶颈 |
+| 物理 / 动效 | 自写 verlet 链 | 掉落淡入（reveal）、idle breeze 微风、鼠标拨开、松手回弹（home 弹簧）|
+| 拼接 | 采样凤冠 PNG alpha 轮廓 | 帘幕沿冠形垂挂，非直线 |
+| 部署 | `@cloudflare/vite-plugin` `^1.44.0` + wrangler `^4.110.0` | 构建自动产出 `wrangler.json`，部署到 Cloudflare Pages |
+
+### 依赖
+
+**运行时（dependencies）**
+
+| 包 | 版本 | 用途 |
+|---|---|---|
+| `react` | `^19.2.0` | UI 框架 |
+| `react-dom` | `^19.2.0` | DOM 渲染 |
+| `@chenglou/pretext` | `^0.0.8` | 字形测量（真实字宽布局）|
+
+**开发（devDependencies）**
+
+| 包 | 版本 | 用途 |
+|---|---|---|
+| `vite` | `^8.1.4` | 构建 / dev server |
+| `@vitejs/plugin-react` | `^6.0.3` | React 插件 |
+| `typescript` | `^7.0.2` | 类型检查 |
+| `@types/react` | `^19` | React 类型 |
+| `@types/react-dom` | `^19` | React DOM 类型 |
+| `tailwindcss` | `^4.3.2` | 样式引擎 |
+| `@tailwindcss/vite` | `^4.3.2` | Tailwind Vite 插件 |
+| `@cloudflare/vite-plugin` | `^1.44.0` | Cloudflare 部署插件 |
+| `wrangler` | `^4.110.0` | Cloudflare CLI |
+
+> 包管理使用 **bun**（`bun.lock` 锁定）。也可用 npm/pnpm，但 lockfile 不同。
 
 ## 开发
 
@@ -38,6 +65,12 @@ src/
     crown-art.ts        # 凤冠 PNG 资源映射
 public/crowns/          # 凤冠图（对齐原项目，已获授权）
 ```
+
+## 参考与来源
+
+- **项目灵感**：参考推文 [x.com/i/status/2076410277109645741](https://x.com/i/status/2076410277109645741)
+- **fork 源码**：[aigc17/Chinese-PhoenixCrown](https://github.com/aigc17/Chinese-PhoenixCrown)
+  （对应推文 [x.com/i/status/2076602891432034606](https://x.com/i/status/2076602891432034606)）
 
 ## 对齐说明
 
