@@ -28,9 +28,9 @@ jobs:
           {
             echo "## $DATE"
             echo
-            if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
-              # initial push: list all commits up to AFTER
-              git log --pretty=format:'- %s (%h)' "$AFTER" --reverse
+            if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ] || [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+              # manual trigger or initial push: list all commits up to HEAD
+              git log --pretty=format:'- %s (%h)' --reverse
             else
               git log --pretty=format:'- %s (%h)' "${BEFORE}..${AFTER}" --reverse
             fi
