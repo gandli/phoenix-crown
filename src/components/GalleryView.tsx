@@ -11,16 +11,13 @@ export function GalleryView({
   onSelect: (i: number) => void;
 }) {
   return (
-    <div className="pointer-events-auto absolute inset-x-0 bottom-[4%] top-0 overflow-y-auto px-[6vw] pb-6 pt-[88px]">
-      <div className="mb-6 text-center">
-        <p className="text-lg text-[var(--foreground)]">七顶凤冠</p>
-      </div>
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+    <div className="pointer-events-auto absolute inset-x-0 bottom-[5%] top-0 overflow-y-auto px-[8vw] pb-[8%] pt-[96px]">
+      <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4">
         {destinations.map((d, i) => (
           <button
             key={d.id}
             onClick={() => onSelect(i)}
-            className={`group flex flex-col items-center rounded-lg border p-3 text-center transition-colors ${
+            className={`group flex flex-col items-center rounded-lg border p-4 text-center transition-colors ${
               i === initialIndex
                 ? "border-[var(--accent)] bg-white/5"
                 : "border-white/10 hover:border-white/30"
@@ -29,7 +26,7 @@ export function GalleryView({
             <img
               src={crownDataUri(d.art)}
               alt={d.phrase}
-              className="mb-2 h-20 w-auto object-contain"
+              className="mb-3 h-20 w-auto object-contain"
             />
             <div className="text-sm font-medium text-[var(--foreground)]">{d.name}</div>
             <div className="mt-1 text-[11px] text-[var(--muted-foreground)]">{d.phrase}</div>
