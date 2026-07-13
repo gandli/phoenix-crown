@@ -3,7 +3,7 @@
 :root {
   color-scheme: dark;
   /* midnight lacquer blue-black — matches original Chinese-PhoenixCrown .dark */
-  --background: oklch(0.17 0.025 265);
+  --background: oklch(0.17 0.025 265); /* 原项目暗场底 */
   --foreground: oklch(0.88 0.03 85);
   --muted-foreground: oklch(0.66 0.04 262);
   --card: oklch(0.21 0.03 265);
