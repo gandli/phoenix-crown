@@ -12,9 +12,6 @@ export function GalleryView({
 }) {
   return (
     <div className="pointer-events-auto absolute inset-x-0 bottom-[4%] top-0 overflow-y-auto px-[6vw] pb-6 pt-[88px]">
-      <div className="mb-6 text-center">
-        <p className="text-lg text-[var(--foreground)]">七顶凤冠</p>
-      </div>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
         {destinations.map((d, i) => (
           <button
