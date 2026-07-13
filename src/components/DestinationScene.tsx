@@ -57,7 +57,6 @@ export function DestinationScene({
           id={`roof-${destination.id}`}
           src={crownDataUri(destination.art)}
           alt={destination.phrase}
-          crossOrigin="anonymous"
           className={
             dark
               ? "h-auto w-full drop-shadow-[0_0_28px_rgba(96,126,204,0.35)]"
