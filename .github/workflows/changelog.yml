@@ -19,33 +19,84 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build changelog entry from this push
+      - name: Build changelog entries from this push
         id: build
         run: |
           BEFORE="${{ github.event.before }}"
           AFTER="${{ github.event.after }}"
-          DATE=$(date +'%Y-%m-%d')
-          {
-            echo "## $DATE"
-            echo
-            if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
-              # initial push: list all commits up to AFTER
-              git log --pretty=format:'- %s (%h)' "$AFTER" --reverse
-            else
-              git log --pretty=format:'- %s (%h)' "${BEFORE}..${AFTER}" --reverse
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ] || [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            RANGE=""
+          else
+            RANGE="${BEFORE}..${AFTER}"
+          fi
+
+          # type label (zh) for each conventional prefix
+          type_label() {
+            case "$1" in
+              feat)   echo "feat";;
+              fix)    echo "fix";;
+              docs)   echo "docs";;
+              ci)     echo "ci";;
+              refactor) echo "refactor";;
+              chore)  echo "chore";;
+              *)      echo "chore";;
+            esac
+          }
+
+          # collect per-type entries
+          declare -A ENTRIES
+          while IFS= read -r line; do
+            [ -z "$line" ] && continue
+            subj="${line#* }"            # drop hash
+            type_raw="${subj%%:*}"        # before first ':'
+            label=$(type_label "$type_raw")
+            # strip conventional prefix from the visible subject
+            body="${subj#*: }"
+            # extract PR number if present: (#12)
+            pr=""
+            if [[ "$body" =~ \(#([0-9]+)\) ]]; then
+              pr="${BASH_REMATCH[1]}"
+              body="${body% \(#*\)}"     # remove trailing (#12)
             fi
-            echo
-            echo
-          } > /tmp/entry.md
+            hash="${line%% *}"
+            if [ -n "$pr" ]; then
+              entry="- ${body} ([#${pr}](https://github.com/${{ github.repository }}/pull/${pr}))"
+            else
+              entry="- ${body} (${hash})"
+            fi
+            ENTRIES[$label]+="${entry}"$'\n'
+          done < <(git log --pretty=format:'%h %s' $RANGE --reverse)
+
+          # emit grouped block
+          : > /tmp/entry.md
+          for t in feat fix docs ci refactor chore; do
+            if [ -n "${ENTRIES[$t]}" ]; then
+              echo "### $t" >> /tmp/entry.md
+              printf '%s\n' "${ENTRIES[$t]}" >> /tmp/entry.md
+            fi
+          done
           cat /tmp/entry.md
 
-      - name: Prepend entry to CHANGELOG.md
+      - name: Insert entries under [Unreleased]
         run: |
           if [ ! -f CHANGELOG.md ]; then
-            printf '# Changelog\n\n自动追加自每次 push 到 main。\n\n' > CHANGELOG.md
+            printf '# Changelog\n\n自动追加自每次 push 到 main。\n\n## [Unreleased]\n' > CHANGELOG.md
           fi
-          cat /tmp/entry.md CHANGELOG.md > CHANGELOG.tmp
-          mv CHANGELOG.tmp CHANGELOG.md
+          # ensure an [Unreleased] section exists
+          if ! grep -q '^## \[Unreleased\]' CHANGELOG.md; then
+            # insert after the intro (first blank line block) — simple: prepend section
+            printf '## [Unreleased]\n\n%s\n' "$(cat /tmp/entry.md)" > CHANGELOG.tmp
+            # keep the original header (everything before first '## ')
+            header=$(awk '/^## /{exit} {print}' CHANGELOG.md)
+            printf '%s\n%s\n' "$header" "$(cat CHANGELOG.tmp)" > CHANGELOG.md
+          else
+            # insert new entries right after '## [Unreleased]'
+            awk -v blk="$(cat /tmp/entry.md)" '
+              /^## \[Unreleased\]/ { print; print ""; printf "%s", blk; next }
+              { print }
+            ' CHANGELOG.md > CHANGELOG.tmp
+            mv CHANGELOG.tmp CHANGELOG.md
+          fi
 
       - name: Commit and push
         run: |
