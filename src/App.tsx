@@ -16,6 +16,9 @@ export default function App() {
   const dark = destinations[index].theme === "dark";
 
   function go(update: () => void) {
+    // `update` mutates navigation state (index/view); we also clear the
+    // one-shot `entrance` flag so the roof-drop / curtain-reveal animation
+    // replays on every navigation. In gallery view the flag is unused.
     update();
     setEntrance(false);
   }

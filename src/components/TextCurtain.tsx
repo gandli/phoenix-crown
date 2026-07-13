@@ -50,7 +50,8 @@ const MOUSE_RADIUS = 120;
 const DAMPING = 0.94;
 const HOME_STIFFNESS = 0.014;
 const CONSTRAINT_ITERATIONS = 2;
-const ALPHA_THRESHOLD = 40;
+const ALPHA_THRESHOLD = 40; // 0-255 canvas alpha cutoff for "opaque" crown pixel
+const FALLBACK_CHAR = "文"; // used when a pool index resolves to undefined
 
 // font used both for the atlas raster and for the pretext measurement, so the
 // measured advance matches exactly what gets drawn.
@@ -279,19 +280,32 @@ export function TextCurtain({
       buildAtlas();
       sampleAvoidRects();
 
-      // pretext measures the true per-glyph advance (no DOM). We clamp it to a
-      // sane band so the column grid stays close to the reference's 8.5px while
-      // honoring real CJK width — narrower glyphs pack tighter, never overlap.
+      // pretext measures the true per-glyph advance (no DOM). Use it as the
+      // sole source of column spacing so the curtain packs by real CJK width
+      // rather than a hardcoded grid. Only fall back to COL_SPACING if the
+      // measurement is unavailable, and say so loudly.
       let colStep = COL_SPACING;
       if (prepared) {
         try {
           const stat = measureLineStats(prepared, COL_SPACING);
-          if (stat.maxLineWidth >= 6 && stat.maxLineWidth <= 11) {
+          if (stat.maxLineWidth > 0) {
             colStep = stat.maxLineWidth;
+          } else {
+            console.warn(
+              "[TextCurtain] pretext measured zero advance; falling back to COL_SPACING",
+            );
           }
-        } catch {
+        } catch (err) {
+          console.warn(
+            "[TextCurtain] pretext measurement failed; falling back to COL_SPACING",
+            err,
+          );
           colStep = COL_SPACING;
         }
+      } else {
+        console.warn(
+          "[TextCurtain] pretext unavailable; using hardcoded COL_SPACING grid",
+        );
       }
 
       const colCount = Math.max(1, Math.floor(width / colStep));
@@ -330,7 +344,7 @@ export function TextCurtain({
               ? colors[Math.floor(rand(c * 13.7 + Math.floor(r / 6) * 5.1) * colors.length)]
               : color;
 
-          const ch = charPool[(charOffset + r) % charPool.length] ?? "文";
+          const ch = charPool[(charOffset + r) % charPool.length] ?? FALLBACK_CHAR;
           chain.push({
             // start collapsed at the top so the curtain "drops" in
             x: homeX,
@@ -568,6 +582,19 @@ export function TextCurtain({
     window.addEventListener("pointerleave", onPointerLeave);
     document.addEventListener("mouseleave", onPointerLeave);
 
+    // pause the render loop while the tab is hidden to save battery/CPU
+    function onVisibility() {
+      if (document.hidden) {
+        running = false;
+      } else if (!reduceMotion) {
+        if (!running) {
+          running = true;
+          loop();
+        }
+      }
+    }
+    document.addEventListener("visibilitychange", onVisibility);
+
     return () => {
       running = false;
       cancelAnimationFrame(raf);
@@ -575,6 +602,7 @@ export function TextCurtain({
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerleave", onPointerLeave);
       document.removeEventListener("mouseleave", onPointerLeave);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, [charPool, color, colors, inkAlpha, luminous, contourSelector, avoidSelector]);
 
