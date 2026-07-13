@@ -81,3 +81,23 @@ public/crowns/          # 凤冠图（对齐原项目，已获授权）
 
 每次 push 到 `main`，GitHub Actions（`.github/workflows/changelog.yml`）
 会将本次包含的 commits 追加进 `CHANGELOG.md`。
+
+## 部署（Cloudflare Pages）
+
+```bash
+bun run build
+bunx wrangler pages deploy dist
+```
+
+- 部署前需 `wrangler login` 或设置 `CLOUDFLARE_API_TOKEN`。
+- `public/_headers` 已声明：
+  - `/crowns/*` → `Access-Control-Allow-Origin: *`（凤冠 PNG 供 Canvas `getImageData` 采样轮廓，避免 CORS 失败致帘幕不渲染）
+  - 全局 → `Content-Security-Policy` / `X-Content-Type-Options` / `Referrer-Policy` 等基础安全头
+- 本地 `bun run dev` 同源，不触发 CORS，但生产环境依赖上述 `_headers`。
+
+## 许可证与来源
+
+- 凤冠 PNG 资源与文案 fork 自 [`aigc17/Chinese-PhoenixCrown`](https://github.com/aigc17/Chinese-PhoenixCrown)，
+  按原项目许可使用（详见 [`LICENSE`](./LICENSE)）。
+- 本仓库的布局引擎（pretext 测宽）、verlet 物理与交互为独立重构实现。
+- 安全相关反馈见 [`SECURITY.md`](./SECURITY.md)。

@@ -1,0 +1,26 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - name: Type-check + build
+        run: bun run build
+      - name: Dependency audit
+        run: bun audit || true
+        # `bun audit` exits non-zero on advisories; kept non-blocking until a
+        # baseline is established. Promote to a hard gate once advisories are
+        # triaged.
