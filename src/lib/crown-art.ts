@@ -15,11 +15,6 @@ const FILES: Record<CrownArt, string> = {
   fenghou: "crown-empress.png",
 };
 
-export function crownSvg(_art: CrownArt): string {
-  // retained for API compatibility; real rendering uses crownDataUri (PNG)
-  return "";
-}
-
 export function crownDataUri(art: CrownArt): string {
   return `/crowns/${FILES[art]}`;
 }
