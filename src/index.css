@@ -82,3 +82,19 @@ body {
   white-space: nowrap;
   border: 0;
 }
+
+/* reduced-motion: kill the entrance/reveal transitions for users who
+   request less movement. The curtain JS also renders static in this mode. */
+@media (prefers-reduced-motion: reduce) {
+  .scene-in,
+  .roof-in {
+    animation: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

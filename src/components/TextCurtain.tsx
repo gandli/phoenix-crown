@@ -170,6 +170,13 @@ export function TextCurtain({
     let reveal = 0;
     let revealAt = Infinity;
 
+    // accessibility: respect reduced-motion — render the curtain static
+    // (no drop-in, no idle breeze, no mouse interaction) when the user
+    // asks for less motion. We still draw once so the art reads.
+    const reduceMotion =
+      typeof matchMedia === "function" &&
+      matchMedia("(prefers-reduced-motion: reduce)").matches;
+
     // canvas-space rects (headline, captions) the strands fade behind
     let avoidRects: { left: number; top: number; right: number; bottom: number }[] = [];
     const AVOID_FEATHER = 48;
@@ -478,9 +485,14 @@ export function TextCurtain({
       // collapsed at the eave when they fade in and drop
       if (performance.now() >= revealAt) {
         if (reveal < 1) reveal = Math.min(1, reveal + 0.025);
-        step();
+        if (!reduceMotion) step();
       }
       draw();
+      // reduced-motion: draw the static curtain once, then stop the loop
+      if (reduceMotion && reveal >= 1) {
+        running = false;
+        return;
+      }
       raf = requestAnimationFrame(loop);
     }
 
@@ -519,7 +531,8 @@ export function TextCurtain({
         sampleContourImage(img);
         build();
         // let the roof settle before the strands drop from its path
-        revealAt = performance.now() + 380;
+        // (skip the delay under reduced-motion — show the static curtain at once)
+        revealAt = reduceMotion ? performance.now() : performance.now() + 380;
       } else if (img) {
         // nothing renders until the roof has loaded — no flat curtain flash
         img.addEventListener(
@@ -527,7 +540,7 @@ export function TextCurtain({
           () => {
             sampleContourImage(img);
             build();
-            revealAt = performance.now() + 380;
+            revealAt = reduceMotion ? performance.now() : performance.now() + 380;
           },
           { once: true },
         );
