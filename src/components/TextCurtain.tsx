@@ -5,6 +5,7 @@ import {
   type PreparedTextWithSegments,
 } from "@chenglou/pretext";
 import type { GravityVec } from "../lib/gravity";
+import { gravityBus, GRAVITY_CHANGE } from "../lib/gravity";
 
 type Node = {
   x: number;
@@ -665,7 +666,7 @@ export function TextCurtain({
         loop();
       }
     }
-    window.addEventListener("gravitychange", onGravityChange);
+    gravityBus.addEventListener(GRAVITY_CHANGE, onGravityChange);
 
     // pause the render loop while the tab is hidden to save battery/CPU
     function onVisibility() {
@@ -689,7 +690,7 @@ export function TextCurtain({
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerleave", onPointerLeave);
       document.removeEventListener("mouseleave", onPointerLeave);
-      window.removeEventListener("gravitychange", onGravityChange);
+      gravityBus.removeEventListener(GRAVITY_CHANGE, onGravityChange);
       document.removeEventListener("visibilitychange", onVisibility);
     };
   }, [charPool, color, colors, inkAlpha, luminous, contourSelector, avoidSelector]);
