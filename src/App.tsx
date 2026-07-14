@@ -4,6 +4,7 @@ import { SiteHeader } from "./components/SiteHeader";
 import { DestinationScene } from "./components/DestinationScene";
 import { GalleryView } from "./components/GalleryView";
 import { GalleryViewPro } from "./components/GalleryViewPro";
+import { useGravity } from "./lib/gravity";
 import { type Lang, type ThemeMode } from "./lib/i18n";
 
 type View = "scene" | "gallery";
@@ -24,6 +25,10 @@ export default function App() {
       new URLSearchParams(window.location.search).get("pro") === "1" ||
       localStorage.getItem("pc-pro") === "1",
   );
+
+  // device-tilt gravity for the hanging curtain (HTTPS only; desktop no-op)
+  const { gravity, supported: gravitySupported, active: gravityActive, toggle: toggleGravity } =
+    useGravity();
 
   // 持久化用户选择, 刷新/分享链接不丢失
   useEffect(() => {
@@ -55,13 +60,15 @@ export default function App() {
         view={view}
         lang={lang}
         theme={theme}
+        gravitySupported={gravitySupported}
+        gravityActive={gravityActive}
+        onToggleGravity={toggleGravity}
         onViewChange={(v) => go(() => setView(v))}
         onToggleLang={() => setLang((l) => (l === "zh" ? "en" : "zh"))}
         onCycleTheme={() =>
           setTheme((m) => (m === "dark" ? "light" : "dark"))
         }
       />
-
       {/* content area sits below the header in the flex column */}
       <div className="relative min-h-0 flex-1 overflow-hidden">
         {view === "scene" ? (
@@ -72,6 +79,7 @@ export default function App() {
               entrance={entrance}
               dark={effectiveDark}
               lang={lang}
+              gravity={gravity}
               onIndex={(i) => go(() => setIndex(i))}
             />
             <div

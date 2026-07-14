@@ -4,16 +4,22 @@ export function SiteHeader({
   view,
   lang,
   theme,
+  gravitySupported,
+  gravityActive,
   onViewChange,
   onToggleLang,
   onCycleTheme,
+  onToggleGravity,
 }: {
   view: "scene" | "gallery";
   lang: Lang;
   theme: ThemeMode;
+  gravitySupported: boolean;
+  gravityActive: boolean;
   onViewChange: (v: "scene" | "gallery") => void;
   onToggleLang: () => void;
   onCycleTheme: () => void;
+  onToggleGravity: () => void;
 }) {
   const navBtn = (active: boolean) =>
     `min-h-[44px] rounded-md px-3 font-mono text-xs underline-offset-4 transition-colors hover:bg-white/5 hover:underline ${
@@ -64,6 +70,21 @@ export function SiteHeader({
         >
           {t("langLabel", lang)}
         </button>
+        {gravitySupported && (
+          <button
+            type="button"
+            onClick={onToggleGravity}
+            aria-pressed={gravityActive}
+            aria-label={t("gravity", lang)}
+            className={`min-h-[44px] rounded-md px-3 font-mono text-xs transition-colors hover:bg-white/5 ${
+              gravityActive
+                ? "bg-white/[0.06] text-[var(--foreground)] underline"
+                : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+            }`}
+          >
+            {t("gravity", lang)}
+          </button>
+        )}
       </div>
     </header>
   );

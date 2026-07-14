@@ -4,6 +4,7 @@ import {
   measureLineStats,
   type PreparedTextWithSegments,
 } from "@chenglou/pretext";
+import type { GravityVec } from "../lib/gravity";
 
 type Node = {
   x: number;
@@ -41,14 +42,21 @@ type Props = {
   /** CSS selector for elements (headline, captions) the curtain should fade
    * out behind so overlapping copy stays readable. */
   avoidSelector?: string;
+  /** Live device-tilt gravity vector {x,y} in [-1,1]; the verlet curtain
+   * reads it each frame so the strands lean/swing with phone tilt. Desktop
+   * (no sensor) passes {0,0} and the curtain keeps its mouse-brush behaviour. */
+  gravity?: GravityVec;
 };
 
 const COL_SPACING = 8.5;
-const ROW_SPACING = 9.5;
-const FONT_SIZE = 7;
+const ROW_SPACING = 12;
+const FONT_SIZE = 10;
 const MOUSE_RADIUS = 120;
 const DAMPING = 0.94;
 const HOME_STIFFNESS = 0.014;
+// tilt gravity strength: small so the curtain sways and finds a new lean
+// angle rather than snapping; HOME_STIFFNESS pulls it back when level.
+const GRAVITY_STRENGTH = 0.02;
 const CONSTRAINT_ITERATIONS = 2;
 const ALPHA_THRESHOLD = 40; // 0-255 canvas alpha cutoff for "opaque" crown pixel
 const FALLBACK_CHAR = "文"; // used when a pool index resolves to undefined
@@ -76,6 +84,7 @@ export function TextCurtain({
   luminous = false,
   contourSelector,
   avoidSelector,
+  gravity = { x: 0, y: 0 },
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -276,9 +285,9 @@ export function TextCurtain({
       const rect = canvas!.getBoundingClientRect();
       width = rect.width;
       height = rect.height;
-      // 1.5x is visually indistinguishable for 7px glyphs but cuts canvas
-      // fill cost by ~44% versus 2x on retina screens
-      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      // 2x fills retina/phone screens at full res for crisp glyphs; the
+      // atlas is rasterized at this scale so small CJK strokes stay sharp.
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas!.width = Math.round(width * dpr);
       canvas!.height = Math.round(height * dpr);
 
@@ -407,6 +416,13 @@ export function TextCurtain({
 
           // idle sway
           vx += breeze * depth;
+
+          // device-tilt gravity (HTTPS sensor): the curtain leans toward the
+          // tilt and swings when the device moves. Scaled by depth so the
+          // top (pinned) stays put and the lower strands swing more, like
+          // real hanging fabric. Desktop passes {0,0} → no effect.
+          vx += gravity.x * GRAVITY_STRENGTH * depth;
+          vy += gravity.y * GRAVITY_STRENGTH * depth;
 
           // cursor gathers the strands like a hand brushing fabric
           if (isBrushing()) {
