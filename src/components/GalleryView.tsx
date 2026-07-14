@@ -12,7 +12,7 @@ export function GalleryView({
 }) {
   return (
     <div className="pointer-events-auto absolute inset-0 overflow-y-auto px-[8vw] py-[8%] pb-[10%]">
-      <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4">
+      <div className="mx-auto grid max-w-[1500px] grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4">
         {destinations.map((d, i) => (
           <button
             key={d.id}
