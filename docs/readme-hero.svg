@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 480" width="100%" role="img" aria-label="凤冠 Phoenix Crown — 汉字帘幕下的七顶凤冠可视化">
+  <title>凤冠 Phoenix Crown · 汉字帘幕可视化</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0A0F1A"/>
+      <stop offset="1" stop-color="#0d1422"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="38%" r="55%">
+      <stop offset="0" stop-color="#c9a24b" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#c9a24b" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="480" fill="url(#bg)"/>
+  <rect width="1200" height="480" fill="url(#glow)"/>
+
+  <!-- 帘幕 motif: 竖排汉字垂落 -->
+  <g font-family="'Songti SC','Noto Serif SC',serif" fill="#E1D6C2" opacity="0.9">
+    <g font-size="40" text-anchor="middle">
+      <text x="70"  y="120">凤</text>
+      <text x="70"  y="180">冠</text>
+      <text x="70"  y="240">霞</text>
+      <text x="70"  y="300">帔</text>
+    </g>
+    <g font-size="40" text-anchor="middle" opacity="0.78">
+      <text x="1130" y="140">汉</text>
+      <text x="1130" y="200">字</text>
+      <text x="1130" y="260">帘</text>
+      <text x="1130" y="320">幕</text>
+    </g>
+  </g>
+  <!-- 帘线 -->
+  <g stroke="#8593AB" stroke-width="1" opacity="0.5">
+    <line x1="50" y1="60" x2="50" y2="430"/>
+    <line x1="90" y1="60" x2="90" y2="430"/>
+    <line x1="1110" y1="60" x2="1110" y2="430"/>
+    <line x1="1150" y1="60" x2="1150" y2="430"/>
+  </g>
+
+  <!-- 标题 -->
+  <text x="600" y="210" text-anchor="middle" font-family="'Songti SC','Noto Serif SC',serif" font-size="92" font-weight="600" fill="#E1D6C2" letter-spacing="6">凤冠 · Phoenix Crown</text>
+  <text x="600" y="270" text-anchor="middle" font-family="'Songti SC','Noto Serif SC',serif" font-size="34" fill="#8593AB" letter-spacing="3">汉字帘幕下的七顶凤冠 · 交互光影可视化</text>
+  <text x="600" y="320" text-anchor="middle" font-family="ui-monospace,'JetBrains Mono',monospace" font-size="22" fill="#c9a24b" letter-spacing="1">Vite · React · pretext · verlet · Canvas</text>
+
+  <line x1="440" y1="360" x2="760" y2="360" stroke="#c9a24b" stroke-width="1" opacity="0.6"/>
+  <text x="600" y="400" text-anchor="middle" font-family="'Songti SC',serif" font-size="22" fill="#b9c0d0">打开网页，凤冠悬于光影，汉字帘幕随风垂落。</text>
+</svg>
