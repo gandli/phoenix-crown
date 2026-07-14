@@ -72,6 +72,16 @@ public/crowns/          # 凤冠图（对齐原项目，已获授权）
 
 ![展陈页 · 凤冠霞帔（含左右上一顶/下一顶预览）](./docs/scene-preview.png)
 
+## 集藏页 · 两种风格
+
+默认网格视图（`GalleryView`）：
+
+![集藏页 · 默认网格](./docs/gallery-standard.png)
+
+「高级画廊」变体（`GalleryViewPro`，redesign 对比用）：去卡片边框、靠留白分层、非对称行、冠图更大 + hover 光晕。通过 `?pro=1` 启用，默认仍用网格视图。
+
+![集藏页 · 高级画廊变体](./docs/gallery-pro.png)
+
 ## 参考与来源
 
 - **项目灵感**：参考推文 [x.com/i/status/2076410277109645741](https://x.com/i/status/2076410277109645741)
