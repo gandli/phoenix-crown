@@ -1,0 +1,21 @@
+fix: 修复帘幕从不渲染(Q4 回归) + 重力感应真物理 E2E
+
+修复(关键):
+- DestinationScene CrownImg 透传 id={roof-${destination.id}} (PR #47 漏传,
+  导致 TextCurtain.initContour 找不到冠图锚点, 帘幕整段不渲染 → 用户看到的
+  "没有汉字帘幕" 根因). 主冠图与失败占位均带 id.
+
+重力感应增强:
+- useGravity: 支持判定改为 ondeviceorientation 事件属性存在(桌面浏览器也
+  成立), 不再依赖构造器; 倾斜时 dispatch 'gravitychange' 唤醒渲染循环
+- TextCurtain: 监听 'gravitychange' 唤醒 rAF; idle-stop 在重力激活时不停;
+  GRAVITY_STRENGTH 调到 2.0 使倾斜产生可见偏摆
+
+测试:
+- e2e/gravity.spec.ts: 真物理测试, 开启重力后模拟 deviceorientation 倾斜,
+  读 canvas 像素算帘幕重心, 断言右/左倾真实水平位移(10 passed 含此 2)
+- 删除临时 diag.spec.ts
+
+验证: bun run build ✓ / bun run test 10 ✓ / npx playwright test 10 ✓
+
+Co-Authored-By: Claude <noreply@anthropic.com>

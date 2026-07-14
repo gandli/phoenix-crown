@@ -15,16 +15,19 @@ function CrownImg({
   alt,
   className,
   decorative = false,
+  id,
 }: {
   art: Destination["art"];
   alt: string;
   className: string;
   decorative?: boolean;
+  id?: string;
 }) {
   const [failed, setFailed] = useState(false);
   if (failed) {
     return (
       <div
+        id={id}
         className={`flex items-center justify-center rounded-lg border border-[var(--border)] bg-white/[0.03] text-[var(--muted-foreground)] ${className}`}
         aria-hidden={decorative}
       >
@@ -34,6 +37,7 @@ function CrownImg({
   }
   return (
     <img
+      id={id}
       src={crownDataUri(art)}
       alt={alt}
       aria-hidden={decorative}
@@ -113,6 +117,7 @@ export function DestinationScene({
           key={destination.art}
           art={destination.art}
           alt={destination.phrase}
+          id={`roof-${destination.id}`}
           className={
             dark
               ? "h-auto w-full drop-shadow-[0_0_28px_var(--crown-shadow)]"
