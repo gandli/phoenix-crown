@@ -1,12 +1,29 @@
+import { t, type Lang, type ThemeMode } from "../lib/i18n";
+
 export function SiteHeader({
   view,
+  lang,
+  theme,
   onViewChange,
+  onToggleLang,
+  onCycleTheme,
 }: {
   view: "scene" | "gallery";
+  lang: Lang;
+  theme: ThemeMode;
   onViewChange: (v: "scene" | "gallery") => void;
+  onToggleLang: () => void;
+  onCycleTheme: () => void;
 }) {
+  const navBtn = (active: boolean) =>
+    `min-h-[44px] rounded-md px-3 font-mono text-xs underline-offset-4 transition-colors hover:bg-white/5 hover:underline ${
+      active
+        ? "bg-white/[0.06] text-[var(--foreground)] underline"
+        : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+    }`;
+
   return (
-    <header className="pointer-events-auto relative z-30 flex items-center px-6 py-5 md:px-10">
+    <header className="pointer-events-auto relative z-30 flex items-center justify-between px-6 py-5 md:px-10">
       <div className="flex items-center gap-10">
         <span className="font-mono text-sm font-medium tracking-wide text-[var(--foreground)]">
           凤冠
@@ -15,27 +32,38 @@ export function SiteHeader({
           <button
             type="button"
             onClick={() => onViewChange("scene")}
-            className={`min-h-[44px] rounded-md px-3 font-mono text-xs underline-offset-4 transition-colors hover:bg-white/5 hover:underline ${
-              view === "scene"
-                ? "bg-white/[0.06] text-[var(--foreground)] underline"
-                : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
-            }`}
+            className={navBtn(view === "scene")}
           >
-            展陈
+            {t("scene", lang)}
           </button>
           <button
             type="button"
             onClick={() => onViewChange("gallery")}
             aria-current={view === "gallery" ? "page" : undefined}
-            className={`min-h-[44px] rounded-md px-3 font-mono text-xs underline-offset-4 transition-colors hover:bg-white/5 hover:underline ${
-              view === "gallery"
-                ? "bg-white/[0.06] text-[var(--foreground)] underline"
-                : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
-            }`}
+            className={navBtn(view === "gallery")}
           >
-            集藏
+            {t("gallery", lang)}
           </button>
         </nav>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={onCycleTheme}
+          aria-label={t("themeAuto", lang)}
+          className="min-h-[44px] rounded-md px-3 font-mono text-xs text-[var(--muted-foreground)] transition-colors hover:bg-white/5 hover:text-[var(--foreground)]"
+        >
+          {theme === "auto" ? t("themeAuto", lang) : theme === "dark" ? t("themeDark", lang) : t("themeLight", lang)}
+        </button>
+        <button
+          type="button"
+          onClick={onToggleLang}
+          aria-label="Language"
+          className="min-h-[44px] rounded-md px-3 font-mono text-xs text-[var(--muted-foreground)] transition-colors hover:bg-white/5 hover:text-[var(--foreground)]"
+        >
+          {t("langLabel", lang)}
+        </button>
       </div>
     </header>
   );

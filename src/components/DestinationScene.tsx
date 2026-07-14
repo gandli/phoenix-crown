@@ -1,20 +1,24 @@
 import { TextCurtain } from "./TextCurtain";
 import { crownDataUri } from "../lib/crown-art";
 import type { Destination } from "../lib/destinations";
+import { t, type Lang } from "../lib/i18n";
 
 export function DestinationScene({
   destinations,
   index,
   entrance = true,
+  dark,
+  lang = "zh",
   onIndex,
 }: {
   destinations: Destination[];
   index: number;
   entrance?: boolean;
+  dark: boolean;
+  lang?: Lang;
   onIndex: (i: number) => void;
 }) {
   const destination = destinations[index];
-  const dark = destination.theme === "dark";
   const sceneIn = entrance ? "scene-in" : "";
   const n = destinations.length;
   const prevIdx = (index - 1 + n) % n;
@@ -77,7 +81,7 @@ export function DestinationScene({
       {/* visible prev / next crown previews — guide the eye to the other crowns */}
       <button
         type="button"
-        aria-label={`上一顶：${prev.name}`}
+        aria-label={`${t("prev", lang)}：${prev.name}`}
         onClick={() => onIndex(prevIdx)}
         className={`${navBtn} left-[3vw]`}
       >
@@ -93,7 +97,7 @@ export function DestinationScene({
       </button>
       <button
         type="button"
-        aria-label={`下一顶：${next.name}`}
+        aria-label={`${t("next", lang)}：${next.name}`}
         onClick={() => onIndex(nextIdx)}
         className={`${navBtn} right-[3vw]`}
       >
