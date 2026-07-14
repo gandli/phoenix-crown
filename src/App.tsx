@@ -4,6 +4,7 @@ import { SiteHeader } from "./components/SiteHeader";
 import { DestinationScene } from "./components/DestinationScene";
 import { GalleryView } from "./components/GalleryView";
 import { GalleryViewPro } from "./components/GalleryViewPro";
+import { type Lang, type ThemeMode } from "./lib/i18n";
 
 type View = "scene" | "gallery";
 
@@ -11,12 +12,19 @@ export default function App() {
   const [index, setIndex] = useState(0);
   const [view, setView] = useState<View>("scene");
   const [entrance, setEntrance] = useState(true);
+  const [theme, setTheme] = useState<ThemeMode>("auto");
+  const [lang, setLang] = useState<Lang>("zh");
   // opt-in "高级画廊" 变体对比: ?pro=1 启用 GalleryViewPro, 默认仍用 GalleryView
   const [pro] = useState(
     () => new URLSearchParams(window.location.search).get("pro") === "1",
   );
 
-  const dark = destinations[index].theme === "dark";
+  const crownDark = destinations[index].theme === "dark";
+  // effective darkness for the curtain/crown rendering
+  const effectiveDark = theme === "auto" ? crownDark : theme === "dark";
+  // data-theme attribute drives the CSS token override
+  const dataTheme: "dark" | "light" =
+    theme === "auto" ? (crownDark ? "dark" : "light") : theme;
 
   function go(update: () => void) {
     // `update` mutates navigation state (index/view); we also clear the
@@ -28,11 +36,19 @@ export default function App() {
 
   return (
     <main
-      className={`paper-grain relative flex h-dvh flex-col overflow-hidden bg-[var(--background)] transition-colors duration-700 ${
-        dark ? "dark" : ""
-      }`}
+      data-theme={dataTheme}
+      className="paper-grain relative flex h-dvh flex-col overflow-hidden bg-[var(--background)] text-[var(--foreground)] transition-colors duration-700"
     >
-      <SiteHeader view={view} onViewChange={(v) => go(() => setView(v))} />
+      <SiteHeader
+        view={view}
+        lang={lang}
+        theme={theme}
+        onViewChange={(v) => go(() => setView(v))}
+        onToggleLang={() => setLang((l) => (l === "zh" ? "en" : "zh"))}
+        onCycleTheme={() =>
+          setTheme((m) => (m === "auto" ? "dark" : m === "dark" ? "light" : "auto"))
+        }
+      />
 
       {/* content area sits below the header in the flex column */}
       <div className="relative min-h-0 flex-1 overflow-hidden">
@@ -42,6 +58,8 @@ export default function App() {
               destinations={destinations}
               index={index}
               entrance={entrance}
+              dark={effectiveDark}
+              lang={lang}
               onIndex={(i) => go(() => setIndex(i))}
             />
             <div
@@ -56,20 +74,24 @@ export default function App() {
               </div>
             </div>
           </>
+        ) : pro ? (
+          <GalleryViewPro
+            destinations={destinations}
+            initialIndex={index}
+            onSelect={(i) => go(() => {
+              setIndex(i);
+              setView("scene");
+            })}
+          />
         ) : (
-          pro ? (
-            <GalleryViewPro
-              destinations={destinations}
-              initialIndex={index}
-              onSelect={(i) => go(() => { setIndex(i); setView("scene"); })}
-            />
-          ) : (
-            <GalleryView
-              destinations={destinations}
-              initialIndex={index}
-              onSelect={(i) => go(() => { setIndex(i); setView("scene"); })}
-            />
-          )
+          <GalleryView
+            destinations={destinations}
+            initialIndex={index}
+            onSelect={(i) => go(() => {
+              setIndex(i);
+              setView("scene");
+            })}
+          />
         )}
       </div>
     </main>
