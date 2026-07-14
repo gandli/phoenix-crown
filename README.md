@@ -67,7 +67,7 @@ bun run build      # 产出 dist/，含 wrangler.json
 
 ## 目录
 
-```
+```text
 src/
   components/
     TextCurtain.tsx     # 帘幕核心：pretext 测宽 + verlet + Canvas
