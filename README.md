@@ -82,6 +82,8 @@ public/crowns/          # 凤冠图（对齐原项目，已获授权）
 
 ![集藏页 · 高级画廊变体](./docs/gallery-pro.png)
 
+> 信息架构决策（展陈/集藏的关系、未决问题）见 [docs/ia-decision.md](./docs/ia-decision.md)。
+
 ## 参考与来源
 
 - **项目灵感**：参考推文 [x.com/i/status/2076410277109645741](https://x.com/i/status/2076410277109645741)
