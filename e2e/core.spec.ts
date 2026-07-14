@@ -49,4 +49,13 @@ test.describe("凤冠 Phoenix Crown — 核心交互", () => {
     const card = page.getByRole("button", { name: /Fengguan/ }).first();
     await expect(card).toBeVisible();
   });
+
+  test("favicon + OG 资源可访问 (锁定 #44)", async ({ request }) => {
+    const favicon = await request.get("/favicon.svg");
+    expect(favicon.status()).toBe(200);
+    expect(favicon.headers()["content-type"]).toContain("image/svg+xml");
+    const og = await request.get("/og-image.png");
+    expect(og.status()).toBe(200);
+    expect(og.headers()["content-type"]).toContain("image/png");
+  });
 });
