@@ -3,6 +3,7 @@ import { TextCurtain } from "./TextCurtain";
 import { crownDataUri } from "../lib/crown-art";
 import type { Destination } from "../lib/destinations";
 import { t, type Lang } from "../lib/i18n";
+import type { GravityVec } from "../lib/gravity";
 
 /**
  * Crown image with a graceful load-failure surface (Q4): if the PNG fails to
@@ -49,6 +50,7 @@ export function DestinationScene({
   dark,
   lang = "zh",
   onIndex,
+  gravity,
 }: {
   destinations: Destination[];
   index: number;
@@ -56,6 +58,7 @@ export function DestinationScene({
   dark: boolean;
   lang?: Lang;
   onIndex: (i: number) => void;
+  gravity?: GravityVec;
 }) {
   const destination = destinations[index];
   const sceneIn = entrance ? "scene-in" : "";
@@ -97,6 +100,7 @@ export function DestinationScene({
           luminous={dark}
           contourSelector={`#roof-${destination.id}`}
           avoidSelector="[data-curtain-avoid]"
+          gravity={gravity}
         />
       </div>
 

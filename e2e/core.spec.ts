@@ -58,4 +58,15 @@ test.describe("凤冠 Phoenix Crown — 核心交互", () => {
     expect(og.status()).toBe(200);
     expect(og.headers()["content-type"]).toContain("image/png");
   });
+
+  test("重力感应: localhost 安全上下文显示按钮, 点击后激活", async ({ page }) => {
+    await page.goto("/");
+    // localhost is a secure context → 重力 button renders
+    const gbtn = page.getByRole("button", { name: "重力", exact: true });
+    await expect(gbtn).toBeVisible();
+    await expect(gbtn).toHaveAttribute("aria-pressed", "false");
+    await gbtn.click();
+    // after click (non-iOS: listener attaches directly) → aria-pressed true
+    await expect(gbtn).toHaveAttribute("aria-pressed", "true");
+  });
 });

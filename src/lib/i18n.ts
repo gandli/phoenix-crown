@@ -11,6 +11,7 @@ const dict = {
     themeDark: "暗",
     themeLight: "亮",
     langLabel: "EN",
+    gravity: "重力",
   },
   en: {
     scene: "Exhibit",
@@ -20,6 +21,7 @@ const dict = {
     themeDark: "Dark",
     themeLight: "Light",
     langLabel: "中",
+    gravity: "Gravity",
   },
 } as const;
 
