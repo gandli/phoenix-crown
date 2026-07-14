@@ -1,7 +1,46 @@
+import { useState } from "react";
 import { TextCurtain } from "./TextCurtain";
 import { crownDataUri } from "../lib/crown-art";
 import type { Destination } from "../lib/destinations";
 import { t, type Lang } from "../lib/i18n";
+
+/**
+ * Crown image with a graceful load-failure surface (Q4): if the PNG fails to
+ * load (e.g. CORS / missing asset), show a discreet gold-bordered placeholder
+ * instead of a broken-image icon, so the scene never looks broken.
+ */
+function CrownImg({
+  art,
+  alt,
+  className,
+  decorative = false,
+}: {
+  art: Destination["art"];
+  alt: string;
+  className: string;
+  decorative?: boolean;
+}) {
+  const [failed, setFailed] = useState(false);
+  if (failed) {
+    return (
+      <div
+        className={`flex items-center justify-center rounded-lg border border-[var(--border)] bg-white/[0.03] text-[var(--muted-foreground)] ${className}`}
+        aria-hidden={decorative}
+      >
+        <span className="px-2 text-center text-xs">冠图加载失败</span>
+      </div>
+    );
+  }
+  return (
+    <img
+      src={crownDataUri(art)}
+      alt={alt}
+      aria-hidden={decorative}
+      onError={() => setFailed(true)}
+      className={className}
+    />
+  );
+}
 
 export function DestinationScene({
   destinations,
@@ -66,9 +105,9 @@ export function DestinationScene({
         className={`absolute left-1/2 top-[5%] -translate-x-1/2 ${entrance ? "roof-in" : ""}`}
         style={{ width: dark ? "clamp(240px, 30vw, 640px)" : "clamp(320px, 38vw, 760px)" }}
       >
-        <img
-          id={`roof-${destination.id}`}
-          src={crownDataUri(destination.art)}
+        <CrownImg
+          key={destination.art}
+          art={destination.art}
           alt={destination.phrase}
           className={
             dark
@@ -85,10 +124,11 @@ export function DestinationScene({
         onClick={() => onIndex(prevIdx)}
         className={`${navBtn} left-[3vw] lg:left-[7vw]`}
       >
-        <img
-          src={crownDataUri(prev.art)}
+        <CrownImg
+          key={prev.art}
+          art={prev.art}
           alt=""
-          aria-hidden
+          decorative
           className="h-14 w-auto opacity-70 transition-opacity group-hover:opacity-100"
         />
         <span className="line-clamp-1 text-center text-[10px] leading-tight text-[var(--muted-foreground)]">
@@ -101,10 +141,11 @@ export function DestinationScene({
         onClick={() => onIndex(nextIdx)}
         className={`${navBtn} right-[3vw] lg:right-[7vw]`}
       >
-        <img
-          src={crownDataUri(next.art)}
+        <CrownImg
+          key={next.art}
+          art={next.art}
           alt=""
-          aria-hidden
+          decorative
           className="h-14 w-auto opacity-70 transition-opacity group-hover:opacity-100"
         />
         <span className="line-clamp-1 text-center text-[10px] leading-tight text-[var(--muted-foreground)]">

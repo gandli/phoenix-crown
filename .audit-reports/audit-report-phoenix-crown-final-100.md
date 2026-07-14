@@ -40,6 +40,13 @@
 |---|---|---|
 | #44 | favicon (svg+png) + OG image (1200×630) + index.html OG/twitter 标签 | 文档 9→10 |
 | #45 | Playwright E2E 6 用例 + CI 门禁 + console.warn DEV guard | 测试 8→10 / 稳定性 8→9 / 可维护性 9→10 |
+| #28 | ImgBot 图片优化 (−4.6% 体积) | 文档/性能 维持 |
+
+## 收尾增强（审计闭环后, 由 Agent 自主决定执行）
+
+| PR | 内容 | 维度影响 |
+|---|---|---|
+| 待合 | Q4: 冠图加载失败 surface — `CrownImg` 子组件 onError 显示低调金线占位 (非裂图)；favicon/OG 加 E2E 守护 (7 用例) | 稳定性/可维护性 维持满分 |
 
 ## 验证命令（real，main 上）
 
