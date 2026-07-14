@@ -9,6 +9,8 @@
 
 **85 / 100 · A-**（初扫 63/D → 修复 85/A-；本轮复扫在新增主题/语言/i18n 后仍为 85/A-，P2-GLOW 经 CDP 核实为非问题已撤回，无新增 P0/P1 残留）
 
+> **复扫闭环后综合评分：88 / A**（在 #36 补 vitest 测试护网、#37 主题/语言持久化、#38 英文模式文档化后，P0/P1/P2 全清零，+3）。下表 findings 为复扫时快照，状态见最右列。
+
 技术债估算：≈ 0.5 人日（P1×2 + P2×1 + P3×2，均为低风险局部修复）。
 
 ## TL;DR（执行摘要表）
@@ -25,13 +27,13 @@
 
 ## P0/P1/P2 清单（摘要）
 
-| ID | 严重度 | 维度 | 文件:行 | 问题 |
-|---|---|---|---|---|
-| P1-TEST | P1 | 测试 | 全仓 | 无单测/E2E，CI 仅 tsc+build+audit，重构无回归护网 |
-| P1-THEME | P1 | 架构/状态 | `App.tsx:11-17` | 主题/语言 state 未持久化（刷新即丢），且 `?pro` 也丢失；破坏用户选择 |
-| P2-EN-NOOP | P2 | i18n 完整性 | `SiteHeader.tsx` / `DestinationScene.tsx` | 英文模式仅翻 UI 标签，底部 phraseNote/caption 仍中文且无英文对照，info 架构上"半翻译" |
-| P3-REDUCE | P3 | 动效 | `index.css` reduced-motion 块 | 已覆盖；`fade-in-up` 用 `motion-safe:` 前缀，天然尊重偏好（合规）|
-| P3-CONSOLE | P3 | 可维护性 | `TextCurtain.tsx:299/304/311` | 3 处 `console.warn` 为 pretext 回退诊断，前缀清晰无泄密，可保留 |
+| ID | 严重度 | 维度 | 文件:行 | 问题 | 状态 |
+|---|---|---|---|---|---|
+| P1-TEST | P1 | 测试 | 全仓 | 无单测/E2E，CI 仅 tsc+build+audit，重构无回归护网 | ✅ 已闭环 (#36) |
+| P1-THEME | P1 | 架构/状态 | `App.tsx:11-17` | 主题/语言 state 未持久化（刷新即丢），且 `?pro` 也丢失；破坏用户选择 | ✅ 已闭环 (#37) |
+| P2-EN-NOOP | P2 | i18n 完整性 | `SiteHeader.tsx` / `DestinationScene.tsx` | 英文模式仅翻 UI 标签，底部 phraseNote/caption 仍中文且无英文对照，info 架构上"半翻译" | ✅ 已闭环 (#38，README 已注明 UI 本地化定位) |
+| P3-REDUCE | P3 | 动效 | `index.css` reduced-motion 块 | 已覆盖；`fade-in-up` 用 `motion-safe:` 前缀，天然尊重偏好（合规）| — 合规 |
+| P3-CONSOLE | P3 | 可维护性 | `TextCurtain.tsx:299/304/311` | 3 处 `console.warn` 为 pretext 回退诊断，前缀清晰无泄密，可保留 | — 可保留 |
 
 ## 剩余项（非阻断）
 - 无开放 P0。
