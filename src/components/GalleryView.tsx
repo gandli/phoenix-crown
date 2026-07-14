@@ -31,6 +31,9 @@ export function GalleryView({
             <img
               src={crownDataUri(d.art)}
               alt={d.phrase}
+              loading="lazy"
+              decoding="async"
+              height={96}
               className="mb-3 h-24 w-auto object-contain drop-shadow-[0_6px_18px_rgba(0,0,0,0.35)] transition-transform duration-200 group-hover:scale-105"
             />
             <div className="text-sm font-medium text-[var(--foreground)]">{d.name}</div>

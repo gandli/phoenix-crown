@@ -36,6 +36,7 @@ export default function App() {
   }, [theme]);
   useEffect(() => {
     localStorage.setItem("pc-lang", lang);
+    document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
   }, [lang]);
 
   // effective darkness for the curtain/crown rendering (no auto mode)
@@ -86,10 +87,10 @@ export default function App() {
               data-curtain-avoid
               className="pointer-events-none absolute bottom-[3%] left-1/2 -translate-x-1/2 text-center"
             >
-              <div className="text-xs uppercase tracking-[0.3em] text-[var(--muted-foreground)]">
+              <div className="text-balance text-xs uppercase tracking-[0.3em] text-[var(--muted-foreground)]">
                 {destinations[index].phraseNote}
               </div>
-              <div className="mt-1 text-base text-[var(--foreground)]">
+              <div className="text-pretty mt-1 text-base text-[var(--foreground)]">
                 {destinations[index].phrase}
               </div>
             </div>
