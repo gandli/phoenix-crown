@@ -81,6 +81,20 @@ body {
   animation: roof-in 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

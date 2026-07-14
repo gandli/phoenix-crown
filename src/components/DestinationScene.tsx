@@ -23,7 +23,7 @@ export function DestinationScene({
   const next = destinations[nextIdx];
 
   const navBtn =
-    "group pointer-events-auto absolute top-[52%] -translate-y-1/2 z-20 flex w-[14%] max-w-[92px] flex-col items-center gap-2 rounded-xl border border-white/15 bg-white/[0.03] p-2 backdrop-blur-[2px] transition-colors hover:border-white/35 hover:bg-white/[0.07] focus-visible:border-[var(--ring)]";
+    "group pointer-events-auto absolute top-[52%] -translate-y-1/2 z-20 flex w-[14%] max-w-[92px] flex-col items-center gap-2 rounded-xl border border-white/15 bg-white/[0.03] p-2 backdrop-blur-[2px] transition-[transform,border-color,background-color] duration-200 hover:border-white/35 hover:bg-white/[0.07] active:scale-[0.97] focus-visible:border-[var(--ring)]";
 
   return (
     <div className="pointer-events-none absolute inset-0">
