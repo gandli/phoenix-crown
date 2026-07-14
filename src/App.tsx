@@ -3,6 +3,7 @@ import { destinations } from "./lib/destinations";
 import { SiteHeader } from "./components/SiteHeader";
 import { DestinationScene } from "./components/DestinationScene";
 import { GalleryView } from "./components/GalleryView";
+import { GalleryViewPro } from "./components/GalleryViewPro";
 
 type View = "scene" | "gallery";
 
@@ -10,6 +11,10 @@ export default function App() {
   const [index, setIndex] = useState(0);
   const [view, setView] = useState<View>("scene");
   const [entrance, setEntrance] = useState(true);
+  // opt-in "高级画廊" 变体对比: ?pro=1 启用 GalleryViewPro, 默认仍用 GalleryView
+  const [pro] = useState(
+    () => new URLSearchParams(window.location.search).get("pro") === "1",
+  );
 
   const dark = destinations[index].theme === "dark";
 
@@ -52,11 +57,19 @@ export default function App() {
             </div>
           </>
         ) : (
-          <GalleryView
-            destinations={destinations}
-            initialIndex={index}
-            onSelect={(i) => go(() => { setIndex(i); setView("scene"); })}
-          />
+          pro ? (
+            <GalleryViewPro
+              destinations={destinations}
+              initialIndex={index}
+              onSelect={(i) => go(() => { setIndex(i); setView("scene"); })}
+            />
+          ) : (
+            <GalleryView
+              destinations={destinations}
+              initialIndex={index}
+              onSelect={(i) => go(() => { setIndex(i); setView("scene"); })}
+            />
+          )
         )}
       </div>
     </main>
