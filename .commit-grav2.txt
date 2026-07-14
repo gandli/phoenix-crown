@@ -1,0 +1,20 @@
+refactor(gravity): 消除全局字符串事件耦合 + 收敛魔数 (增量审计 G2/G3)
+
+增量审计(#46 后 #47-#51)发现的两项可维护性问题, 行为保持重构:
+
+- G2: gravity.ts 与 TextCurtain 原靠 window 字符串事件 "gravitychange" 隐式
+  耦合. 改为模块级 typed EventTarget(gravityBus + GRAVITY_CHANGE 常量),
+  收发双方 import 同一符号, 重命名有编译期保护, 不再依赖 window 全局事件.
+- G3: 倾斜映射魔数 35/45/35 收敛为 GAMMA_RANGE/BETA_NEUTRAL/BETA_RANGE
+  命名常量, 与 TextCurtain 的 GRAVITY_STRENGTH 分区但各有出处注释.
+
+TDD: 先确认重力物理 E2E 基线绿(行为锁定), 重构后再跑全量确认无回归.
+
+验证(real):
+- bun run build: clean
+- bun run test: 10 passed
+- npx playwright test: 13 passed (含 2 重力物理, 行为保持)
+
+业务逻辑/视觉效果不变, 仅结构质量优化.
+
+Co-Authored-By: Claude <noreply@anthropic.com>

@@ -16,8 +16,24 @@ type OrientationEventCtor = typeof DeviceOrientationEvent & {
   requestPermission?: () => Promise<"granted" | "denied">;
 };
 
+// tilt-to-gravity mapping constants (kept here, next to the mapping code)
+const GAMMA_RANGE = 35; // deg of left/right tilt that maps to full horizontal pull
+const BETA_NEUTRAL = 45; // deg of front/back tilt when held naturally
+const BETA_RANGE = 35; // deg of deviation from BETA_NEUTRAL that maps to full vertical pull
+
 function clamp(v: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(hi, v));
+}
+
+// Typed, module-scoped channel that tells the curtain render loop a new tilt
+// arrived. Using an explicit EventTarget (not a raw `window` "gravitychange"
+// string event) keeps the contract between this module and TextCurtain
+// compile-checked — a rename breaks the build instead of silently failing.
+export const gravityBus = new EventTarget();
+export const GRAVITY_CHANGE = "gravitychange";
+
+function dispatchGravityChange() {
+  gravityBus.dispatchEvent(new Event(GRAVITY_CHANGE));
 }
 
 export function useGravity() {
@@ -43,19 +59,19 @@ export function useGravity() {
     const gamma = e.gamma ?? 0; // left-right tilt, degrees [-90, 90]
     const beta = e.beta ?? 0; // front-back tilt, degrees [-180, 180]
     // gamma 0 = phone upright → no horizontal pull; tilt left/right swings it.
-    gravity.current.x = clamp(gamma / 35, -1, 1);
+    gravity.current.x = clamp(gamma / GAMMA_RANGE, -1, 1);
     // beta ~ 45 when held naturally; deviation shifts the vertical bias so the
     // curtain leans as you tilt the device toward/away from you.
-    gravity.current.y = clamp((beta - 45) / 35, -1, 1);
+    gravity.current.y = clamp((beta - BETA_NEUTRAL) / BETA_RANGE, -1, 1);
     // notify the curtain render loop to wake (mirrors a pointer brush)
-    window.dispatchEvent(new Event("gravitychange"));
+    dispatchGravityChange();
   }, []);
 
   const stop = useCallback(() => {
     window.removeEventListener("deviceorientation", onOrientation);
     gravity.current.x = 0;
     gravity.current.y = 0;
-    window.dispatchEvent(new Event("gravitychange"));
+    dispatchGravityChange();
     setActive(false);
   }, [onOrientation]);
 
