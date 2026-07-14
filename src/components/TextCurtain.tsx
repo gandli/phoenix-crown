@@ -296,21 +296,27 @@ export function TextCurtain({
           if (stat.maxLineWidth > 0) {
             colStep = stat.maxLineWidth;
           } else {
-            console.warn(
-              "[TextCurtain] pretext measured zero advance; falling back to COL_SPACING",
-            );
+            if (import.meta.env.DEV) {
+              console.warn(
+                "[TextCurtain] pretext measured zero advance; falling back to COL_SPACING",
+              );
+            }
           }
         } catch (err) {
-          console.warn(
-            "[TextCurtain] pretext measurement failed; falling back to COL_SPACING",
-            err,
-          );
+          if (import.meta.env.DEV) {
+            console.warn(
+              "[TextCurtain] pretext measurement failed; falling back to COL_SPACING",
+              err,
+            );
+          }
           colStep = COL_SPACING;
         }
       } else {
-        console.warn(
-          "[TextCurtain] pretext unavailable; using hardcoded COL_SPACING grid",
-        );
+        if (import.meta.env.DEV) {
+          console.warn(
+            "[TextCurtain] pretext unavailable; using hardcoded COL_SPACING grid",
+          );
+        }
       }
 
       const colCount = Math.max(1, Math.floor(width / colStep));
