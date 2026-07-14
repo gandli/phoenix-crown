@@ -9,3 +9,7 @@ tsconfig.tsbuildinfo
 # playwright
 e2e/test-results/
 playwright-report/
+.hyperframes/
+videos/
+frame.md
+.commit-e2e.txt
