@@ -23,7 +23,7 @@ export function SiteHeader({
     }`;
 
   return (
-    <header className="pointer-events-auto relative z-30 flex items-center justify-between px-6 py-5 md:px-10">
+    <header className="pointer-events-auto relative z-30 mx-auto flex w-full max-w-[1600px] items-center justify-between px-6 py-5 md:px-10">
       <div className="flex items-center gap-10">
         <span className="font-mono text-sm font-medium tracking-wide text-[var(--foreground)]">
           凤冠

@@ -36,7 +36,7 @@ export function DestinationScene({
           aria-hidden
           className={`absolute left-1/2 top-[8%] h-[50%] -translate-x-1/2 ${sceneIn}`}
           style={{
-            width: "clamp(440px, 56vw, 900px)",
+            width: "clamp(520px, 60vw, 1100px)",
             background:
               "radial-gradient(ellipse at center, var(--crown-glow) 0%, var(--crown-glow-soft) 45%, transparent 72%)",
             filter: "blur(10px)",
@@ -48,7 +48,7 @@ export function DestinationScene({
       <div
         className={`pointer-events-auto absolute bottom-[14%] left-1/2 top-[5%] -translate-x-1/2 ${sceneIn}`}
         style={{
-          width: `min(calc(clamp(220px, 26vw, 440px) * ${destination.curtainWidth} + 40vw), 98vw)`,
+          width: `min(calc(clamp(240px, 30vw, 640px) * ${destination.curtainWidth} + 40vw), 98vw)`,
         }}
       >
         <TextCurtain
@@ -64,7 +64,7 @@ export function DestinationScene({
       {/* crown art above the curtain */}
       <div
         className={`absolute left-1/2 top-[5%] -translate-x-1/2 ${entrance ? "roof-in" : ""}`}
-        style={{ width: dark ? "clamp(220px, 26vw, 440px)" : "clamp(300px, 34vw, 560px)" }}
+        style={{ width: dark ? "clamp(240px, 30vw, 640px)" : "clamp(320px, 38vw, 760px)" }}
       >
         <img
           id={`roof-${destination.id}`}
@@ -83,7 +83,7 @@ export function DestinationScene({
         type="button"
         aria-label={`${t("prev", lang)}：${prev.name}`}
         onClick={() => onIndex(prevIdx)}
-        className={`${navBtn} left-[3vw]`}
+        className={`${navBtn} left-[3vw] lg:left-[7vw]`}
       >
         <img
           src={crownDataUri(prev.art)}
@@ -99,7 +99,7 @@ export function DestinationScene({
         type="button"
         aria-label={`${t("next", lang)}：${next.name}`}
         onClick={() => onIndex(nextIdx)}
-        className={`${navBtn} right-[3vw]`}
+        className={`${navBtn} right-[3vw] lg:right-[7vw]`}
       >
         <img
           src={crownDataUri(next.art)}
