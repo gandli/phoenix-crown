@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { destinations } from "./lib/destinations";
 import { SiteHeader } from "./components/SiteHeader";
 import { DestinationScene } from "./components/DestinationScene";
@@ -12,12 +12,26 @@ export default function App() {
   const [index, setIndex] = useState(0);
   const [view, setView] = useState<View>("scene");
   const [entrance, setEntrance] = useState(true);
-  const [theme, setTheme] = useState<ThemeMode>("auto");
-  const [lang, setLang] = useState<Lang>("zh");
+  const [theme, setTheme] = useState<ThemeMode>(
+    () => (localStorage.getItem("pc-theme") as ThemeMode) || "auto",
+  );
+  const [lang, setLang] = useState<Lang>(
+    () => (localStorage.getItem("pc-lang") as Lang) || "zh",
+  );
   // opt-in "高级画廊" 变体对比: ?pro=1 启用 GalleryViewPro, 默认仍用 GalleryView
   const [pro] = useState(
-    () => new URLSearchParams(window.location.search).get("pro") === "1",
+    () =>
+      new URLSearchParams(window.location.search).get("pro") === "1" ||
+      localStorage.getItem("pc-pro") === "1",
   );
+
+  // 持久化用户选择, 刷新/分享链接不丢失
+  useEffect(() => {
+    localStorage.setItem("pc-theme", theme);
+  }, [theme]);
+  useEffect(() => {
+    localStorage.setItem("pc-lang", lang);
+  }, [lang]);
 
   const crownDark = destinations[index].theme === "dark";
   // effective darkness for the curtain/crown rendering
