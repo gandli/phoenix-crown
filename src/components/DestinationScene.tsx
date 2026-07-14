@@ -3,18 +3,27 @@ import { crownDataUri } from "../lib/crown-art";
 import type { Destination } from "../lib/destinations";
 
 export function DestinationScene({
-  destination,
-  onPrev,
-  onNext,
+  destinations,
+  index,
   entrance = true,
+  onIndex,
 }: {
-  destination: Destination;
-  onPrev: () => void;
-  onNext: () => void;
+  destinations: Destination[];
+  index: number;
   entrance?: boolean;
+  onIndex: (i: number) => void;
 }) {
+  const destination = destinations[index];
   const dark = destination.theme === "dark";
   const sceneIn = entrance ? "scene-in" : "";
+  const n = destinations.length;
+  const prevIdx = (index - 1 + n) % n;
+  const nextIdx = (index + 1) % n;
+  const prev = destinations[prevIdx];
+  const next = destinations[nextIdx];
+
+  const navBtn =
+    "group pointer-events-auto absolute top-[52%] -translate-y-1/2 z-20 flex w-[14%] max-w-[92px] flex-col items-center gap-2 rounded-xl border border-white/15 bg-white/[0.03] p-2 backdrop-blur-[2px] transition-colors hover:border-white/35 hover:bg-white/[0.07] focus-visible:border-[var(--ring)]";
 
   return (
     <div className="pointer-events-none absolute inset-0">
@@ -65,17 +74,39 @@ export function DestinationScene({
         />
       </div>
 
-      {/* prev / next click zones */}
+      {/* visible prev / next crown previews — guide the eye to the other crowns */}
       <button
-        aria-label="previous"
-        onClick={onPrev}
-        className="pointer-events-auto absolute inset-y-0 left-0 w-[18%] cursor-pointer bg-transparent"
-      />
+        type="button"
+        aria-label={`上一顶：${prev.name}`}
+        onClick={() => onIndex(prevIdx)}
+        className={`${navBtn} left-[3vw]`}
+      >
+        <img
+          src={crownDataUri(prev.art)}
+          alt=""
+          aria-hidden
+          className="h-14 w-auto opacity-70 transition-opacity group-hover:opacity-100"
+        />
+        <span className="line-clamp-1 text-center text-[10px] leading-tight text-[var(--muted-foreground)]">
+          {prev.name}
+        </span>
+      </button>
       <button
-        aria-label="next"
-        onClick={onNext}
-        className="pointer-events-auto absolute inset-y-0 right-0 w-[18%] cursor-pointer bg-transparent"
-      />
+        type="button"
+        aria-label={`下一顶：${next.name}`}
+        onClick={() => onIndex(nextIdx)}
+        className={`${navBtn} right-[3vw]`}
+      >
+        <img
+          src={crownDataUri(next.art)}
+          alt=""
+          aria-hidden
+          className="h-14 w-auto opacity-70 transition-opacity group-hover:opacity-100"
+        />
+        <span className="line-clamp-1 text-center text-[10px] leading-tight text-[var(--muted-foreground)]">
+          {next.name}
+        </span>
+      </button>
 
       <h1 className="sr-only">
         {destination.name} —— {destination.headingRest}

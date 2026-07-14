@@ -11,8 +11,6 @@ export default function App() {
   const [view, setView] = useState<View>("scene");
   const [entrance, setEntrance] = useState(true);
 
-  const prev = (index - 1 + destinations.length) % destinations.length;
-  const next = (index + 1) % destinations.length;
   const dark = destinations[index].theme === "dark";
 
   function go(update: () => void) {
@@ -36,10 +34,10 @@ export default function App() {
         {view === "scene" ? (
           <>
             <DestinationScene
-              destination={destinations[index]}
+              destinations={destinations}
+              index={index}
               entrance={entrance}
-              onPrev={() => go(() => setIndex(prev))}
-              onNext={() => go(() => setIndex(next))}
+              onIndex={(i) => go(() => setIndex(i))}
             />
             <div
               data-curtain-avoid
