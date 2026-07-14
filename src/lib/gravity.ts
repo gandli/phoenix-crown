@@ -28,10 +28,14 @@ export function useGravity() {
 
   useEffect(() => {
     // Secure context (HTTPS / localhost) is required for sensors on iOS.
+    // Detect support by the event handler property (present on desktop too,
+    // even without a sensor) rather than the constructor, which some desktop
+    // browsers don't expose — so the toggle still renders and a synthetic or
+    // real orientation event drives the curtain either way.
     const hasOrientation =
       typeof window !== "undefined" &&
-      typeof DeviceOrientationEvent !== "undefined" &&
-      (window.isSecureContext ?? false);
+      (window.isSecureContext ?? false) &&
+      ("DeviceOrientationEvent" in window || "ondeviceorientation" in window);
     setSupported(hasOrientation);
   }, []);
 
@@ -43,12 +47,15 @@ export function useGravity() {
     // beta ~ 45 when held naturally; deviation shifts the vertical bias so the
     // curtain leans as you tilt the device toward/away from you.
     gravity.current.y = clamp((beta - 45) / 35, -1, 1);
+    // notify the curtain render loop to wake (mirrors a pointer brush)
+    window.dispatchEvent(new Event("gravitychange"));
   }, []);
 
   const stop = useCallback(() => {
     window.removeEventListener("deviceorientation", onOrientation);
     gravity.current.x = 0;
     gravity.current.y = 0;
+    window.dispatchEvent(new Event("gravitychange"));
     setActive(false);
   }, [onOrientation]);
 

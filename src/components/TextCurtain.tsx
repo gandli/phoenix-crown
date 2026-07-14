@@ -54,9 +54,10 @@ const FONT_SIZE = 10;
 const MOUSE_RADIUS = 120;
 const DAMPING = 0.94;
 const HOME_STIFFNESS = 0.014;
-// tilt gravity strength: small so the curtain sways and finds a new lean
-// angle rather than snapping; HOME_STIFFNESS pulls it back when level.
-const GRAVITY_STRENGTH = 0.02;
+// tilt gravity strength: scaled so a full phone tilt visibly leans the lower
+// strands (tens of px) rather than a sub-pixel nudge; HOME_STIFFNESS pulls it
+// back toward straight when the device is level.
+const GRAVITY_STRENGTH = 2.0;
 const CONSTRAINT_ITERATIONS = 2;
 const ALPHA_THRESHOLD = 40; // 0-255 canvas alpha cutoff for "opaque" crown pixel
 const FALLBACK_CHAR = "文"; // used when a pool index resolves to undefined
@@ -550,7 +551,9 @@ export function TextCurtain({
       }
       // idle-stop: once the reveal has finished and the user isn't brushing,
       // let the curtain settle; when it's still, halt the rAF to save CPU.
-      const idle = reveal >= 1 && !isBrushing() && performance.now() - lastInteract >= 2500;
+      // While device gravity is active we keep running so tilt keeps applying.
+      const gravityActive = Math.abs(gravity.x) > 0.001 || Math.abs(gravity.y) > 0.001;
+      const idle = reveal >= 1 && !isBrushing() && !gravityActive && performance.now() - lastInteract >= 2500;
       if (idle) {
         let moving = false;
         for (const chain of columns) {
@@ -652,6 +655,17 @@ export function TextCurtain({
     window.addEventListener("pointermove", onPointerMove);
     window.addEventListener("pointerleave", onPointerLeave);
     document.addEventListener("mouseleave", onPointerLeave);
+    // device-tilt wakes the loop the same way a pointer brush does, so the
+    // curtain reacts live while gravity is active (loop may have idle-stopped)
+    function onGravityChange() {
+      lastInteract = performance.now();
+      if (!running && !reduceMotion) {
+        running = true;
+        lastFrame = performance.now();
+        loop();
+      }
+    }
+    window.addEventListener("gravitychange", onGravityChange);
 
     // pause the render loop while the tab is hidden to save battery/CPU
     function onVisibility() {
@@ -675,6 +689,7 @@ export function TextCurtain({
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerleave", onPointerLeave);
       document.removeEventListener("mouseleave", onPointerLeave);
+      window.removeEventListener("gravitychange", onGravityChange);
       document.removeEventListener("visibilitychange", onVisibility);
     };
   }, [charPool, color, colors, inkAlpha, luminous, contourSelector, avoidSelector]);
