@@ -92,6 +92,7 @@ export function TextCurtain({
     let raf = 0;
     let running = true;
     let time = 0;
+    let lastFrame = performance.now();
 
     // pretext handle — measures the real per-glyph advance (no DOM layout),
     // so columns space by true CJK width instead of the hardcoded grid.
@@ -369,8 +370,10 @@ export function TextCurtain({
       }
     }
 
-    function step() {
-      time += 1 / 60;
+    function step(dt: number) {
+      // advance the animation clock in real (not frame-count) time so the
+      // sway/drop speed is identical on 60Hz and 120Hz displays
+      time += dt;
       const r2 = MOUSE_RADIUS * MOUSE_RADIUS;
       // breeze only while the reveal is playing or the user has interacted
       // recently — otherwise strands settle and the loop can stop (perf).
@@ -507,11 +510,15 @@ export function TextCurtain({
 
     function loop() {
       if (!running) return;
+      const now = performance.now();
+      // clamp dt so a backgrounded tab returning doesn't jump the physics
+      const dt = Math.min((now - lastFrame) / 1000, 1 / 30);
+      lastFrame = now;
       // hold the physics until the reveal starts so the strands are still
       // collapsed at the eave when they fade in and drop
-      if (performance.now() >= revealAt) {
-        if (reveal < 1) reveal = Math.min(1, reveal + 0.025);
-        if (!reduceMotion) step();
+      if (now >= revealAt) {
+        if (reveal < 1) reveal = Math.min(1, reveal + 0.025 * (dt * 60));
+        if (!reduceMotion) step(dt);
       }
       draw();
       // reduced-motion: draw the static curtain once, then stop the loop
@@ -557,6 +564,7 @@ export function TextCurtain({
       // restart the render loop if it was halted while idle
       if (!running && !reduceMotion) {
         running = true;
+        lastFrame = performance.now();
         loop();
       }
     }
@@ -610,8 +618,12 @@ export function TextCurtain({
 
     const ro = new ResizeObserver(() => {
       if (contourSelector && !contourPixels) return;
-      build();
+      // debounce: dragging the window fires resize continuously; coalesce
+      // rebuilds into one per ~150ms so we don't re-measure + re-chain spam
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(build, 150);
     });
+    let resizeTimer = 0 as unknown as ReturnType<typeof setTimeout>;
     ro.observe(canvas);
     // listen on window so strands react even when the cursor is over sibling
     // elements layered above the canvas
@@ -626,6 +638,7 @@ export function TextCurtain({
       } else if (!reduceMotion) {
         if (!running) {
           running = true;
+          lastFrame = performance.now();
           loop();
         }
       }
@@ -634,6 +647,7 @@ export function TextCurtain({
 
     return () => {
       running = false;
+      clearTimeout(resizeTimer);
       cancelAnimationFrame(raf);
       ro.disconnect();
       window.removeEventListener("pointermove", onPointerMove);

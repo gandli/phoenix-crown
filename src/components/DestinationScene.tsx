@@ -25,7 +25,7 @@ export function DestinationScene({
           style={{
             width: "clamp(440px, 56vw, 900px)",
             background:
-              "radial-gradient(ellipse at center, rgba(96,126,204,0.16) 0%, rgba(58,88,160,0.07) 45%, transparent 72%)",
+              "radial-gradient(ellipse at center, var(--crown-glow) 0%, var(--crown-glow-soft) 45%, transparent 72%)",
             filter: "blur(10px)",
           }}
         />
@@ -59,8 +59,8 @@ export function DestinationScene({
           alt={destination.phrase}
           className={
             dark
-              ? "h-auto w-full drop-shadow-[0_0_28px_rgba(96,126,204,0.35)]"
-              : "h-auto w-full drop-shadow-[0_14px_18px_rgba(74,58,40,0.22)]"
+              ? "h-auto w-full drop-shadow-[0_0_28px_var(--crown-shadow)]"
+              : "h-auto w-full drop-shadow-[0_14px_18px_var(--crown-shadow-light)]"
           }
         />
       </div>

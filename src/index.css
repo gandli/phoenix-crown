@@ -10,6 +10,11 @@
   --accent: oklch(0.75 0.1 85);
   --border: oklch(0.6 0.06 262 / 35%);
   --ring: oklch(0.75 0.1 85);
+  /* crown scene atmosphere (dark theme) — derived from --accent hue */
+  --crown-glow: rgba(96, 126, 204, 0.16);
+  --crown-glow-soft: rgba(58, 88, 160, 0.07);
+  --crown-shadow: rgba(96, 126, 204, 0.35);
+  --crown-shadow-light: rgba(74, 58, 40, 0.22);
 }
 
 * {
