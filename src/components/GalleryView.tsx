@@ -20,7 +20,7 @@ export function GalleryView({
             className={`group flex flex-col items-center rounded-lg border p-4 text-center transition-colors ${
               i === initialIndex
                 ? "border-[var(--accent)] bg-white/5"
-                : "border-white/10 hover:border-white/30"
+                : "border-[var(--border)] hover:border-white/30"
             }`}
           >
             <img

@@ -15,7 +15,7 @@ export function SiteHeader({
           <button
             type="button"
             onClick={() => onViewChange("scene")}
-            className={`font-mono text-xs underline-offset-4 transition-colors hover:underline ${
+            className={`min-h-[44px] font-mono text-xs underline-offset-4 transition-colors hover:underline ${
               view === "scene"
                 ? "text-[var(--foreground)] underline"
                 : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
@@ -27,7 +27,7 @@ export function SiteHeader({
             type="button"
             onClick={() => onViewChange("gallery")}
             aria-current={view === "gallery" ? "page" : undefined}
-            className={`font-mono text-xs underline-offset-4 transition-colors hover:underline ${
+            className={`min-h-[44px] font-mono text-xs underline-offset-4 transition-colors hover:underline ${
               view === "gallery"
                 ? "text-[var(--foreground)] underline"
                 : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
