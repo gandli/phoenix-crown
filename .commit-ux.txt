@@ -1,0 +1,18 @@
+fix(ux): UI/UX 无障碍审计修复 U1/U2/U5 (TDD)
+
+三技能审计(baseline-ui + fixing-accessibility + fixing-motion-performance)
+发现的 P2/P3, 按 TDD 红-绿逐项修复:
+
+- U1 (a11y §4): <html lang> 随界面语言同步(zh-CN ↔ en), 屏幕阅读器
+  发音正确 — App.tsx useEffect 设 document.documentElement.lang
+- U2 (perf §5): 集藏卡片图加 loading=lazy + decoding=async + 显式
+  height=96, 分帧解码 + 消除 CLS — GalleryView.tsx
+- U5 (baseline 排版): 展陈 caption 加 text-balance/text-pretty — App.tsx
+
+测试(TDD 先红后绿):
+- e2e/ux-a11y.spec.ts 3 用例, 每项先写失败测试再实现
+- 全量: build ✓ / unit 10 ✓ / e2e 13 ✓ (含新增 3)
+
+保持业务逻辑不变, 仅结构/质量优化.
+
+Co-Authored-By: Claude <noreply@anthropic.com>
