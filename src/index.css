@@ -31,7 +31,12 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* subtle paper grain — original feTurbulence noise (opacity 0.5) */
+/* keyboard focus ring — visible focus for Tab users (WCAG 2.4.7) */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
 .paper-grain::before {
   content: "";
   position: absolute;
