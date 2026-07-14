@@ -66,6 +66,12 @@ src/
 public/crowns/          # 凤冠图（对齐原项目，已获授权）
 ```
 
+## 效果预览
+
+展陈页：单冠大图居中，汉字帘幕沿冠形垂挂；左右常驻可见的「上一顶 / 下一顶」凤冠缩略预览，引导查看其余六顶。
+
+![展陈页 · 凤冠霞帔（含左右上一顶/下一顶预览）](./docs/scene-preview.png)
+
 ## 参考与来源
 
 - **项目灵感**：参考推文 [x.com/i/status/2076410277109645741](https://x.com/i/status/2076410277109645741)
@@ -82,11 +88,14 @@ public/crowns/          # 凤冠图（对齐原项目，已获授权）
 每次 push 到 `main`，GitHub Actions（`.github/workflows/changelog.yml`）
 会将本次包含的 commits 追加进 `CHANGELOG.md`。
 
-## 部署（Cloudflare Pages）
+## 部署（Cloudflare）
+
+本项目用 `@cloudflare/vite-plugin`（Workers 模式），`bun run build` 会自动产出 `dist/wrangler.json`。
 
 ```bash
 bun run build
-bunx wrangler pages deploy dist
+bunx wrangler deploy          # 需先 wrangler login（或设 CLOUDFLARE_API_TOKEN）
+bunx wrangler deploy --temporary   # 免登录临时预览（workers.dev 临时域名，会过期）
 ```
 
 - 部署前需 `wrangler login` 或设置 `CLOUDFLARE_API_TOKEN`。
