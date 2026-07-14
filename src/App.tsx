@@ -13,7 +13,7 @@ export default function App() {
   const [view, setView] = useState<View>("scene");
   const [entrance, setEntrance] = useState(true);
   const [theme, setTheme] = useState<ThemeMode>(
-    () => (localStorage.getItem("pc-theme") as ThemeMode) || "auto",
+    () => (localStorage.getItem("pc-theme") as ThemeMode) || "dark",
   );
   const [lang, setLang] = useState<Lang>(
     () => (localStorage.getItem("pc-lang") as Lang) || "zh",
@@ -33,12 +33,10 @@ export default function App() {
     localStorage.setItem("pc-lang", lang);
   }, [lang]);
 
-  const crownDark = destinations[index].theme === "dark";
-  // effective darkness for the curtain/crown rendering
-  const effectiveDark = theme === "auto" ? crownDark : theme === "dark";
+  // effective darkness for the curtain/crown rendering (no auto mode)
+  const effectiveDark = theme === "dark";
   // data-theme attribute drives the CSS token override
-  const dataTheme: "dark" | "light" =
-    theme === "auto" ? (crownDark ? "dark" : "light") : theme;
+  const dataTheme: "dark" | "light" = theme;
 
   function go(update: () => void) {
     // `update` mutates navigation state (index/view); we also clear the
@@ -60,7 +58,7 @@ export default function App() {
         onViewChange={(v) => go(() => setView(v))}
         onToggleLang={() => setLang((l) => (l === "zh" ? "en" : "zh"))}
         onCycleTheme={() =>
-          setTheme((m) => (m === "auto" ? "dark" : m === "dark" ? "light" : "auto"))
+          setTheme((m) => (m === "dark" ? "light" : "dark"))
         }
       />
 

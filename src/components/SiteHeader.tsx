@@ -51,10 +51,10 @@ export function SiteHeader({
         <button
           type="button"
           onClick={onCycleTheme}
-          aria-label={t("themeAuto", lang)}
+          aria-label={theme === "dark" ? t("themeDark", lang) : t("themeLight", lang)}
           className="min-h-[44px] rounded-md px-3 font-mono text-xs text-[var(--muted-foreground)] transition-colors hover:bg-white/5 hover:text-[var(--foreground)]"
         >
-          {theme === "auto" ? t("themeAuto", lang) : theme === "dark" ? t("themeDark", lang) : t("themeLight", lang)}
+          {theme === "dark" ? t("themeDark", lang) : t("themeLight", lang)}
         </button>
         <button
           type="button"

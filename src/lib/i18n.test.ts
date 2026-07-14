@@ -7,7 +7,8 @@ describe("i18n.t", () => {
     expect(t("gallery", "zh")).toBe("集藏");
     expect(t("prev", "zh")).toBe("上一顶");
     expect(t("next", "zh")).toBe("下一顶");
-    expect(t("themeAuto", "zh")).toBe("跟随冠");
+    expect(t("themeDark", "zh")).toBe("暗");
+    expect(t("themeLight", "zh")).toBe("亮");
   });
 
   it("returns English UI labels for en", () => {
@@ -15,7 +16,8 @@ describe("i18n.t", () => {
     expect(t("gallery", "en")).toBe("Collection");
     expect(t("prev", "en")).toBe("Prev crown");
     expect(t("next", "en")).toBe("Next crown");
-    expect(t("themeAuto", "en")).toBe("Auto");
+    expect(t("themeDark", "en")).toBe("Dark");
+    expect(t("themeLight", "en")).toBe("Light");
   });
 
   it("falls back to zh for an unknown lang code", () => {
