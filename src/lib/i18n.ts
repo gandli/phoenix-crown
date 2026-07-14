@@ -1,6 +1,6 @@
 // 轻量 i18n: 仅 UI 标签, 不翻译冠名/诗句(内容保留中文)
 export type Lang = "zh" | "en";
-export type ThemeMode = "auto" | "dark" | "light";
+export type ThemeMode = "dark" | "light";
 
 const dict = {
   zh: {
@@ -8,7 +8,6 @@ const dict = {
     gallery: "集藏",
     prev: "上一顶",
     next: "下一顶",
-    themeAuto: "跟随冠",
     themeDark: "暗",
     themeLight: "亮",
     langLabel: "EN",
@@ -18,7 +17,6 @@ const dict = {
     gallery: "Collection",
     prev: "Prev crown",
     next: "Next crown",
-    themeAuto: "Auto",
     themeDark: "Dark",
     themeLight: "Light",
     langLabel: "中",
