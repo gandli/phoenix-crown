@@ -15,9 +15,9 @@ export function SiteHeader({
           <button
             type="button"
             onClick={() => onViewChange("scene")}
-            className={`min-h-[44px] font-mono text-xs underline-offset-4 transition-colors hover:underline ${
+            className={`min-h-[44px] rounded-md px-3 font-mono text-xs underline-offset-4 transition-colors hover:bg-white/5 hover:underline ${
               view === "scene"
-                ? "text-[var(--foreground)] underline"
+                ? "bg-white/[0.06] text-[var(--foreground)] underline"
                 : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
             }`}
           >
@@ -27,9 +27,9 @@ export function SiteHeader({
             type="button"
             onClick={() => onViewChange("gallery")}
             aria-current={view === "gallery" ? "page" : undefined}
-            className={`min-h-[44px] font-mono text-xs underline-offset-4 transition-colors hover:underline ${
+            className={`min-h-[44px] rounded-md px-3 font-mono text-xs underline-offset-4 transition-colors hover:bg-white/5 hover:underline ${
               view === "gallery"
-                ? "text-[var(--foreground)] underline"
+                ? "bg-white/[0.06] text-[var(--foreground)] underline"
                 : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
             }`}
           >
