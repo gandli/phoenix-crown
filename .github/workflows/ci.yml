@@ -21,6 +21,10 @@ jobs:
         run: bun run build
       - name: Unit tests
         run: bun run test
+      - name: Install Playwright chromium
+        run: bunx playwright install --with-deps chromium
+      - name: E2E tests
+        run: bun run test:e2e
       - name: Dependency audit
         run: bun audit || true
         # `bun audit` exits non-zero on advisories; kept non-blocking until a
