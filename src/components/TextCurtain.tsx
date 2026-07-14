@@ -107,6 +107,10 @@ export function TextCurtain({
     // back to rest — only a *moving* cursor actually brushes the fabric.
     let lastMove = 0;
     const IDLE_MS = 120;
+    // last time the user interacted (pointer move/leave) or reveal started —
+    // breeze only runs during/after interaction, so the curtain can fall
+    // fully still and the rAF loop can stop when truly idle.
+    let lastInteract = performance.now();
     function isBrushing(): boolean {
       return mouse.active && performance.now() - lastMove < IDLE_MS;
     }
@@ -368,11 +372,15 @@ export function TextCurtain({
     function step() {
       time += 1 / 60;
       const r2 = MOUSE_RADIUS * MOUSE_RADIUS;
+      // breeze only while the reveal is playing or the user has interacted
+      // recently — otherwise strands settle and the loop can stop (perf).
+      const breezeActive =
+        reveal < 1 || performance.now() - lastInteract < 2500;
 
       for (let c = 0; c < columns.length; c++) {
         const chain = columns[c];
         // gentle idle breeze, stronger toward the bottom of each strand
-        const breeze = Math.sin(time * 0.7 + c * 0.35) * 0.012;
+        const breeze = breezeActive ? Math.sin(time * 0.7 + c * 0.35) * 0.012 : 0;
 
         for (let r = 1; r < chain.length; r++) {
           const n = chain[r];
@@ -511,6 +519,25 @@ export function TextCurtain({
         running = false;
         return;
       }
+      // idle-stop: once the reveal has finished and the user isn't brushing,
+      // let the curtain settle; when it's still, halt the rAF to save CPU.
+      const idle = reveal >= 1 && !isBrushing() && performance.now() - lastInteract >= 2500;
+      if (idle) {
+        let moving = false;
+        for (const chain of columns) {
+          for (const n of chain) {
+            if (Math.abs(n.x - n.px) > 0.02 || Math.abs(n.y - n.py) > 0.02) {
+              moving = true;
+              break;
+            }
+          }
+          if (moving) break;
+        }
+        if (!moving) {
+          running = false;
+          return;
+        }
+      }
       raf = requestAnimationFrame(loop);
     }
 
@@ -526,12 +553,19 @@ export function TextCurtain({
       mouse.y = y;
       mouse.active = true;
       lastMove = performance.now();
+      lastInteract = lastMove;
+      // restart the render loop if it was halted while idle
+      if (!running && !reduceMotion) {
+        running = true;
+        loop();
+      }
     }
 
     function onPointerLeave() {
       mouse.active = false;
       mouse.x = -9999;
       mouse.y = -9999;
+      lastInteract = performance.now();
     }
 
     /**
@@ -542,6 +576,7 @@ export function TextCurtain({
       if (!contourSelector) {
         build();
         revealAt = performance.now();
+        lastInteract = performance.now();
         return;
       }
       const img = document.querySelector(contourSelector) as HTMLImageElement | null;
@@ -551,6 +586,7 @@ export function TextCurtain({
         // let the roof settle before the strands drop from its path
         // (skip the delay under reduced-motion — show the static curtain at once)
         revealAt = reduceMotion ? performance.now() : performance.now() + 380;
+        lastInteract = performance.now();
       } else if (img) {
         // nothing renders until the roof has loaded — no flat curtain flash
         img.addEventListener(
@@ -559,6 +595,7 @@ export function TextCurtain({
             sampleContourImage(img);
             build();
             revealAt = reduceMotion ? performance.now() : performance.now() + 380;
+            lastInteract = performance.now();
           },
           { once: true },
         );
