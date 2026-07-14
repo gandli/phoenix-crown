@@ -19,6 +19,8 @@ jobs:
       - run: bun install --frozen-lockfile
       - name: Type-check + build
         run: bun run build
+      - name: Unit tests
+        run: bun run test
       - name: Dependency audit
         run: bun audit || true
         # `bun audit` exits non-zero on advisories; kept non-blocking until a

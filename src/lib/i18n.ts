@@ -26,5 +26,7 @@ const dict = {
 } as const;
 
 export function t(key: keyof (typeof dict)["zh"], lang: Lang): string {
-  return dict[lang][key];
+  // defensive: unknown lang (e.g. malformed query/state) falls back to zh
+  // rather than throwing on undefined dict access.
+  return dict[lang]?.[key] ?? dict.zh[key];
 }
