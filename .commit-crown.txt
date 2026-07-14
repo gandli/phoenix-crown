@@ -1,0 +1,16 @@
+fix(ui): 切换亮色主题凤冠变大的 bug
+
+根因: DestinationScene.tsx 主冠图容器宽度按主题分歧:
+  dark  → clamp(240px, 30vw, 640px)
+  light → clamp(320px, 38vw, 760px)   ← 亮色被单独放大, 视觉 bug
+
+修复: 冠图尺寸与主题无关, 仅 drop-shadow 随主题区分(符合原意图).
+容器宽度统一 clamp(240px, 30vw, 640px).
+
+TDD: 先写失败 E2E 断言暗/亮两主题 #roof-fengguan 渲染宽度一致(RED),
+修复后转绿(GREEN). 另修测试里主题按钮选择器(aria-label 是主题名非"主题").
+
+验证(real):
+- bun run build ✓ / bun run test 10 ✓ / npx playwright test 14 ✓ (含新回归测试)
+
+Co-Authored-By: Claude <noreply@anthropic.com>

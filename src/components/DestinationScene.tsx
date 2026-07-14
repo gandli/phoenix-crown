@@ -111,7 +111,7 @@ export function DestinationScene({
       {/* crown art above the curtain */}
       <div
         className={`absolute left-1/2 top-[5%] -translate-x-1/2 ${entrance ? "roof-in" : ""}`}
-        style={{ width: dark ? "clamp(240px, 30vw, 640px)" : "clamp(320px, 38vw, 760px)" }}
+        style={{ width: "clamp(240px, 30vw, 640px)" }}
       >
         <CrownImg
           key={destination.art}
